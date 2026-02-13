@@ -1,1 +1,70 @@
 
+Genera un documento de pruebas funcionales para un sistema compuesto por tres aplicaciones interconectadas: Plataforma Posnet, Security Portal 2.0, Mobile y Plataforma Logística. El objetivo es validar el flujo completo de creación de usuarios, sincronización entre sistemas, gestión de solicitudes de servicio, ejecución en terreno y actualización de estados.
+
+El documento debe incluir:
+
+1. Introducción: contexto del sistema y objetivo de las pruebas.
+2. Alcance: qué módulos y funcionalidades se probarán.
+3. Escenarios de prueba organizados por flujo:
+   ---
+   Flujo 1: Creación de agentes en Plataforma Posnet y sincronización con Security Portal 2.0
+   · Crear Representante, Técnico y Supervisor.
+   · Validar asignaciones:
+     · Representante asigna Técnicos y Supervisores.
+     · Supervisor asigna Técnicos.
+   · Verificar que los usuarios se crean automáticamente en Security Portal 2.0 y reciben email con credenciales.
+   · Verificar que los datos de Representantes, Técnicos y Supervisores se envían correctamente a Plataforma Logística:
+     · Representante: nombre, responsable, teléfono, id de integración, fecha de creación, fecha de actualización, zonas.
+     · Técnico: nombre de usuario, nombre, apellido, email, tipo de usuario, representante.
+     · Supervisor: mismo esquema que Técnico.
+   ---
+   Flujo 2: Acceso a Mobile
+   · Validar que Técnicos y Supervisores pueden iniciar sesión en Mobile con las credenciales enviadas por email.
+   · Verificar permisos y visualización de órdenes según rol.
+   ---
+   Flujo 3: Creación y asignación de solicitudes en Plataforma Posnet
+   · Buscar una terminal existente en Operaciones → Terminales.
+   · Seleccionar tipo de solicitud: insumos, servicio técnico, instalación, cambio de servicio, cambio de servicio adicional, retiro.
+   · Completar formulario con horario de visita y observación.
+   · Confirmar creación de la solicitud.
+   ---
+   Flujo 4: Gestión de solicitudes en Operaciones → Solicitudes
+   · Buscar la solicitud creada por número de gestión, número de solicitud o número de terminal.
+   · Asignar la solicitud a un Representante y a un Técnico asignado a ese Representante.
+   · Ejecutar la acción de notificación.
+   · Validar que la solicitud cambia a estado "Esperando confirmación".
+   · Verificar que la solicitud se envía correctamente a Plataforma Logística y a Mobile.
+   ---
+   Flujo 5: Ejecución de órdenes en Mobile por parte del Técnico
+   · Iniciar sesión en Mobile con usuario Técnico.
+   · Visualizar órdenes asignadas.
+   · Validar terminal:
+     · Opción A: validar ingresando número de terminal manualmente → Score amarillo.
+     · Opción B: validar sacando foto al cupón → Score verde.
+   · Rechazar orden:
+     · Seleccionar motivo de rechazo según tipo de solicitud.
+     · Confirmar rechazo.
+     · Validar que la orden pasa al estado correspondiente en Mobile.
+   · Completar orden (si se valida):
+     · Ingresar número de serie (y otros campos según tipo de solicitud).
+     · Validar geolocalización:
+       · Si está a más de 8 cuadras del lugar → Score rojo.
+       · Si está dentro de 8 cuadras → Score verde.
+     · Tomar foto del cupón.
+     · Ingresar nombre de la persona que atendió, cargo y observación.
+     · Confirmar finalización.
+   ---
+   Flujo 6: Actualización de estados en plataformas
+   · Si la orden se completa:
+     · Validar que en Plataforma Logística la orden cambia a estado "Completado".
+     · Validar que en Plataforma Posnet la orden cambia al estado correspondiente.
+   · Si la orden se rechaza:
+     · Validar que en Plataforma Logística la orden cambia al estado de rechazo.
+     · Validar que en Plataforma Posnet la orden vuelve a estado "Pendiente" (o el que corresponda).
+   ---
+4. Casos de prueba: tabla con ID, descripción, pasos, dato de prueba, resultado esperado y resultado real (dejar columna vacía).
+5. Criterios de aceptación por cada flujo.
+6. Ambiente de pruebas: datos necesarios (usuarios, terminales, tipos de solicitud, motivos de rechazo, etc.) y configuraciones previas.
+7. Ejecución de pruebas: registro de evidencias y seguimiento de incidentes.
+
+El formato debe ser profesional, claro y listo para usar por un equipo de aseguramiento de calidad.
