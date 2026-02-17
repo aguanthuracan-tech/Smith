@@ -1,13 +1,9 @@
-Perfecto, gracias por la aclaración. Ahora sí el flujo de supervisores queda bien definido. Aquí tienes el documento completo de pruebas funcionales:
-
----
-
 Documento de Pruebas Funcionales
 
 Sistema: Plataforma Posnet + Security Portal 2.0 + Mobile + Plataforma Logística
 
 Versión Fecha Autor Descripción
-1.0 13/02/2026 QA Versión inicial del plan de pruebas
+1.1 17/02/2026 QA Versión actualizada con módulos de Mapa, Búsqueda, Escáner y regla de una orden activa por terminal
 
 ---
 
@@ -16,6 +12,13 @@ Versión Fecha Autor Descripción
 El presente documento tiene como objetivo definir los escenarios, casos de prueba y criterios de aceptación para la validación funcional del ecosistema compuesto por Plataforma Posnet, Security Portal 2.0, Mobile y Plataforma Logística.
 
 Se busca garantizar el correcto funcionamiento del flujo completo desde la creación de agentes, sincronización entre sistemas, asignación de solicitudes, ejecución en terreno y actualización de estados.
+
+Nuevos módulos incluidos en esta versión:
+
+· Mapa de geolocalización: visualización de órdenes asignadas en mapa interactivo para Técnicos y Supervisores.
+· Buscador de órdenes: búsqueda por número de orden, número de terminal o dirección.
+· Escáner de cupón: acceso directo a la orden mediante escaneo de código.
+· Regla de negocio: una terminal solo puede tener una orden activa a la vez.
 
 ---
 
@@ -27,7 +30,11 @@ Dentro del alcance:
 · Sincronización de usuarios con Security Portal 2.0 y envío de credenciales por email.
 · Envío de datos maestros a Plataforma Logística.
 · Acceso a Mobile con usuarios Técnico y Supervisor.
+· Visualización de órdenes en mapa de geolocalización con filtros por estado.
+· Búsqueda de órdenes por número de orden, terminal o dirección.
+· Escáner de cupón para acceso directo a órdenes.
 · Creación, búsqueda y asignación de solicitudes en Plataforma Posnet.
+· Validación de la regla una orden activa por terminal.
 · Ejecución de órdenes en Mobile (validación, rechazo, finalización).
 · Score por método de validación y geolocalización.
 · Actualización de estados en Plataforma Logística y Plataforma Posnet.
@@ -66,14 +73,15 @@ F1-E7 Envío de datos a Plataforma Logística Validar que los datos de Represent
 
 ---
 
-Flujo 2: Acceso a Mobile
+Flujo 2: Acceso a Mobile y funcionalidades base
 
-Objetivo: Validar que Técnicos y Supervisores pueden acceder a Mobile y visualizar las órdenes correspondientes.
+Objetivo: Validar que Técnicos y Supervisores pueden acceder a Mobile y utilizar las funcionalidades de visualización, mapa, búsqueda y escáner.
 
 Precondiciones:
 
 · Usuarios creados y sincronizados.
 · Credenciales recibidas por email.
+· Órdenes asignadas para visualizar en mapa y búsqueda.
 
 Escenarios:
 
@@ -82,12 +90,21 @@ F2-E1 Login exitoso Técnico Ingresar a Mobile con usuario Técnico y contraseñ
 F2-E2 Login exitoso Supervisor Ingresar a Mobile con usuario Supervisor y contraseña recibida.
 F2-E3 Visualización de órdenes - Técnico El Técnico solo ve las órdenes asignadas a él.
 F2-E4 Visualización de órdenes - Supervisor El Supervisor ve sus órdenes asignadas + las órdenes de los Técnicos a su cargo.
+F2-E5 Visualización de órdenes en mapa - Técnico El Técnico ve marcadores en el mapa con la ubicación de sus órdenes asignadas.
+F2-E6 Visualización de órdenes en mapa - Supervisor El Supervisor ve marcadores de sus órdenes + las de sus técnicos a cargo.
+F2-E7 Filtrado de órdenes en mapa por estado Aplicar filtro por estado (ej: Pendiente) y validar que solo se muestran las correspondientes.
+F2-E8 Búsqueda de órdenes por texto Buscar órdenes por número de orden, número de terminal o dirección.
+F2-E9 Búsqueda sin resultados Ingresar término inexistente y validar mensaje de "No se encontraron órdenes".
+F2-E10 Escaneo de cupón válido Escanear cupón de una orden activa y validar que abre el detalle de la orden correcta.
+F2-E11 Escaneo de cupón de orden completada Escanear cupón de una orden ya finalizada y validar mensaje de "Orden ya completada".
+F2-E12 Escaneo de código inválido Escanear un código no registrado y validar mensaje de "Orden no encontrada".
+F2-E13 Acceso a detalle de orden desde mapa Desde el mapa, tocar un marcador y seleccionar "Ver detalle" para navegar a la orden.
 
 ---
 
 Flujo 3: Creación y asignación de solicitudes en Plataforma Posnet
 
-Objetivo: Validar el ciclo de creación, búsqueda y asignación de solicitudes.
+Objetivo: Validar el ciclo de creación, búsqueda y asignación de solicitudes respetando la regla de una orden activa por terminal.
 
 Precondiciones:
 
@@ -98,12 +115,13 @@ Escenarios:
 
 ID Escenario Descripción
 F3-E1 Crear solicitud por terminal Buscar terminal, seleccionar tipo de solicitud, completar horario y observación. Confirmar creación.
-F3-E2 Buscar solicitud por número de gestión En operaciones → solicitudes, buscar por número de gestión.
-F3-E3 Buscar solicitud por número de solicitud Buscar por número de solicitud generado.
-F3-E4 Buscar solicitud por número de terminal Buscar por número de terminal asociado.
-F3-E5 Asignar solicitud Asignar la solicitud a un Representante y a un Técnico de ese Representante.
-F3-E6 Notificar solicitud Ejecutar notificación y validar cambio a estado "Esperando confirmación".
-F3-E7 Envío a Logística y Mobile Validar que la solicitud asignada y notificada llega a Logística y a Mobile del Técnico.
+F3-E2 Validar regla de una orden activa por terminal Intentar crear una solicitud para una terminal que ya tiene una orden activa. Validar que el sistema bloquea la creación.
+F3-E3 Buscar solicitud por número de gestión En operaciones → solicitudes, buscar por número de gestión.
+F3-E4 Buscar solicitud por número de solicitud Buscar por número de solicitud generado.
+F3-E5 Buscar solicitud por número de terminal Buscar por número de terminal asociado.
+F3-E6 Asignar solicitud Asignar la solicitud a un Representante y a un Técnico de ese Representante.
+F3-E7 Notificar solicitud Ejecutar notificación y validar cambio a estado "Esperando confirmación".
+F3-E8 Envío a Logística y Mobile Validar que la solicitud asignada y notificada llega a Logística y a Mobile del Técnico.
 
 ---
 
@@ -141,34 +159,10 @@ Escenarios:
 ID Escenario Descripción
 F5-E1 Orden completada - Estado en Logística Validar que en Plataforma Logística la orden pasa a "Completado".
 F5-E2 Orden completada - Estado en Posnet Validar que en Plataforma Posnet la orden cambia al estado final correspondiente.
-F5-E3 Orden rechazada - Estado en Logística Validar que en Plataforma Logística la orden pasa al estado de rechazo.
-F5-E4 Orden rechazada - Estado en Posnet Validar que en Plataforma Posnet la orden vuelve a "Pendiente".
-
----
-
-4. Casos de prueba
-
-ID Descripción Pasos Dato de prueba Resultado esperado Resultado real
-CP-01 Crear Representante 1. Ir a Agentes > Representantes 2. Completar formulario 3. Guardar Nombre: "Rep QA" Teléfono: 1144445555 Zonas: Zona Norte Representante creado correctamente. 
-CP-02 Crear Técnico con asignación 1. Ir a Agentes > Técnicos 2. Completar formulario 3. Asignar a Representante 4. Guardar Usuario: tec01 Nombre: Juan Email: juan@test.com Representante: Rep QA Técnico creado y asignado. 
-CP-03 Crear Supervisor con asignación 1. Ir a Agentes > Supervisores 2. Completar formulario 3. Asignar a Representante 4. Guardar Usuario: sup01 Nombre: Pedro Email: pedro@test.com Representante: Rep QA Supervisor creado y asignado. 
-CP-04 Supervisor asigna Técnico 1. Login como Supervisor 2. Ir a Mis Técnicos 3. Asignar Técnico Supervisor: sup01 Técnico: tec01 Técnico asignado correctamente. 
-CP-05 Validar sincronización Security Portal 1. Crear Técnico en Posnet 2. Acceder a Security Portal 3. Buscar usuario Usuario: tec01 Usuario existe en Security Portal. 
-CP-06 Validar email credenciales 1. Crear Técnico 2. Revisar bandeja de entrada Email: juan@test.com Email recibido con usuario y contraseña. 
-CP-07 Login Mobile Técnico 1. Abrir Mobile 2. Ingresar credenciales 3. Acceder Usuario: tec01 Pass: (del email) Ingreso exitoso. 
-CP-08 Login Mobile Supervisor 1. Abrir Mobile 2. Ingresar credenciales 3. Acceder Usuario: sup01 Pass: (del email) Ingreso exitoso. 
-CP-09 Supervisor visualiza órdenes de técnicos 1. Login como Supervisor 2. Ir a Órdenes Supervisor con técnicos asignados Ver órdenes propias + de técnicos a cargo. 
-CP-10 Crear solicitud en Posnet 1. Operaciones > Terminales 2. Buscar terminal 3. Seleccionar tipo solicitud 4. Completar horario y observación 5. Guardar Terminal: 123456 Tipo: Instalación Horario: 10:00-12:00 Solicitud creada con éxito. 
-CP-11 Asignar y notificar solicitud 1. Operaciones > Solicitudes 2. Buscar solicitud 3. Asignar Representante y Técnico 4. Notificar Solicitud: SOL-001 Representante: Rep QA Técnico: tec01 Estado: Esperando confirmación. 
-CP-12 Validar terminal manual en Mobile 1. Abrir orden 2. Seleccionar validar manual 3. Ingresar número terminal N° terminal: 123456 Score amarillo. 
-CP-13 Validar terminal con foto 1. Abrir orden 2. Seleccionar validar con foto 3. Tomar foto Foto válida Score verde. 
-CP-14 Rechazar orden 1. Abrir orden 2. Seleccionar rechazar 3. Elegir motivo 4. Confirmar Motivo: Cliente ausente Orden rechazada. 
-CP-15 Completar orden 1. Validar terminal 2. Ingresar número de serie 3. Foto cupón 4. Nombre, cargo, observación 5. Finalizar N° serie: ABC123 Nombre: Carlos Cargo: Encargado Orden completada. 
-CP-16 Geolocalización fuera de rango 1. Iniciar orden 2. Estar a más de 8 cuadras 3. Validar Ubicación: a 10 cuadras Score rojo. 
-CP-17 Validar estado en Logística (completado) 1. Ir a Plataforma Logística 2. Buscar orden N° orden: SOL-001 Estado: Completado. 
-CP-18 Validar estado en Posnet (completado) 1. Ir a Plataforma Posnet 2. Buscar solicitud N° solicitud: SOL-001 Estado: Completado. 
-CP-19 Validar estado en Logística (rechazado) 1. Rechazar orden en Mobile 2. Ir a Logística N° orden: SOL-002 Estado: Rechazado - Cliente ausente. 
-CP-20 Validar estado en Posnet (rechazado) 1. Rechazar orden en Mobile 2. Ir a Posnet N° solicitud: SOL-002 Estado: Pendiente. 
+F5-E3 Orden completada - Terminal queda libre Validar que se puede crear una nueva solicitud para la misma terminal.
+F5-E4 Orden rechazada - Estado en Logística Validar que en Plataforma Logística la orden pasa al estado de rechazo.
+F5-E5 Orden rechazada - Estado en Posnet Validar que en Plataforma Posnet la orden vuelve a "Pendiente".
+F5-E6 Orden rechazada - Terminal queda libre Validar que se puede crear una nueva solicitud para la misma terminal.
 
 ---
 
@@ -176,61 +170,7 @@ CP-20 Validar estado en Posnet (rechazado) 1. Rechazar orden en Mobile 2. Ir a P
 
 Flujo Criterio de aceptación
 F1 Los agentes se crean correctamente, se sincronizan con Security Portal 2.0, reciben email y los datos llegan a Logística.
-F2 Técnicos y Supervisores pueden acceder a Mobile. Supervisores ven órdenes propias y de sus técnicos.
-F3 Las solicitudes se crean, buscan, asignan y notifican correctamente. El estado cambia a "Esperando confirmación".
-F4 Las órdenes pueden validarse (manual/foto), rechazarse o completarse. El Score se calcula según reglas.
-F5 Los cambios de estado se reflejan en Logística y Posnet según la acción realizada en Mobile.
-
----
-
-6. Ambiente de pruebas
-
-Datos necesarios:
-
-· Terminal activa: N° 123456
-· Representante: Rep QA
-· Técnico: tec01 / Juan Pérez / juan@test.com
-· Supervisor: sup01 / Pedro Gómez / pedro@test.com
-· Tipos de solicitud: Instalación, Servicio Técnico, Retiro, Insumos, Cambio de servicio, Cambio de servicio adicional
-· Motivos de rechazo: Cliente ausente, Terminal no disponible, Falla de energía, Otros
-
-Configuraciones previas:
-
-· Acceso a Plataforma Posnet (perfil admin y operador)
-· Acceso a Security Portal 2.0 (consulta de usuarios)
-· Acceso a Plataforma Logística (consulta de órdenes)
-· Dispositivo móvil con Mobile instalado
-· Credenciales de email para validar recepción
-
----
-
-7. Ejecución de pruebas y seguimiento de incidentes
-
-Registro de evidencias:
-
-· Capturas de pantalla por cada caso de prueba ejecutado.
-· Archivos de log cuando corresponda.
-· Email recibido con credenciales.
-
-Seguimiento de incidentes:
-
-ID Incidente CP asociado Descripción Severidad Estado
-    
-
-Herramientas sugeridas:
-
-· Jira / Azure DevOps para gestión de incidentes.
-· SharePoint / Confluence para almacenar evidencias.
-
----
-
-8. Aprobación
-
-Rol Nombre Firma Fecha
-QA Leader   
-Product Owner   
-Desarrollo   
-
----
-
-¿Necesitas que agregue más casos de prueba, flujos alternativos o algún otro detalle?
+F2 Técnicos y Supervisores pueden acceder a Mobile. Supervisores ven órdenes propias y de sus técnicos. El mapa muestra correctamente la ubicación de las órdenes según el perfil. Los filtros en mapa funcionan correctamente. La búsqueda devuelve resultados precisos. El escáner redirige a la orden correcta o muestra mensajes adecuados según el caso.
+F3 Las solicitudes se crean, buscan, asignan y notifican correctamente. No se permite crear una solicitud para una terminal con orden activa. El estado cambia a "Esperando confirmación" tras la notificación.
+F4 Las órdenes pueden validarse (manual/foto), rechazarse o completarse. El Score se calcula según reglas (verde para foto, amarillo para manual, rojo para geolocalización fuera de rango). Los motivos de rechazo varían según tipo de solicitud.
+F5 Los cambios de estado se reflejan en Logística y Posnet según la acción realizada en Mobile. Al completar o rechazar una orden, la terminal queda libre para nuevas solicitudes.
