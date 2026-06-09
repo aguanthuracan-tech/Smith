@@ -1,176 +1,46 @@
-Documento de Pruebas Funcionales
+Eres un documentador técnico-funcional. Para el servicio/aplicación que te indique, genera por cada funcionalidad clave una historia de usuario y, a partir de ella, deriva:
 
-Sistema: Plataforma Posnet + Security Portal 2.0 + Mobile + Plataforma Logística
+1. Documentación técnica (requisitos de sistema, integraciones, endpoints, sincronización, APIs, modelos de datos, seguridad).
+2. Documentación funcional (pasos de usuario, flujos de pantalla, roles, acciones esperadas, ejemplos de uso).
 
-Versión Fecha Autor Descripción
-1.1 17/02/2026 QA Versión actualizada con módulos de Mapa, Búsqueda, Escáner y regla de una orden activa por terminal
+Usa la información que proporcione (ej. "Power BI muestra gráficos y sincroniza con BD").
+Formato de salida por cada historia:
 
----
+Historia de usuario:
+Como [rol], quiero [acción] para [objetivo].
 
-1. Introducción
+Para la documentación técnica:
 
-El presente documento tiene como objetivo definir los escenarios, casos de prueba y criterios de aceptación para la validación funcional del ecosistema compuesto por Plataforma Posnet, Security Portal 2.0, Mobile y Plataforma Logística.
+· [Lista de aspectos técnicos a documentar]
 
-Se busca garantizar el correcto funcionamiento del flujo completo desde la creación de agentes, sincronización entre sistemas, asignación de solicitudes, ejecución en terreno y actualización de estados.
+Para la documentación funcional:
 
-Nuevos módulos incluidos en esta versión:
-
-· Mapa de geolocalización: visualización de órdenes asignadas en mapa interactivo para Técnicos y Supervisores.
-· Buscador de órdenes: búsqueda por número de orden, número de terminal o dirección.
-· Escáner de cupón: acceso directo a la orden mediante escaneo de código.
-· Regla de negocio: una terminal solo puede tener una orden activa a la vez.
+· [Lista de aspectos funcionales a documentar]
 
 ---
 
-2. Alcance
+Ejemplo aplicado a Power BI (como lo darías tú):
 
-Dentro del alcance:
+Servicio: Power BI
+Funcionalidad que indicas: Muestra gráficos y se sincroniza con la base de datos.
 
-· Creación de Representantes, Técnicos y Supervisores en Plataforma Posnet.
-· Sincronización de usuarios con Security Portal 2.0 y envío de credenciales por email.
-· Envío de datos maestros a Plataforma Logística.
-· Acceso a Mobile con usuarios Técnico y Supervisor.
-· Visualización de órdenes en mapa de geolocalización con filtros por estado.
-· Búsqueda de órdenes por número de orden, terminal o dirección.
-· Escáner de cupón para acceso directo a órdenes.
-· Creación, búsqueda y asignación de solicitudes en Plataforma Posnet.
-· Validación de la regla una orden activa por terminal.
-· Ejecución de órdenes en Mobile (validación, rechazo, finalización).
-· Score por método de validación y geolocalización.
-· Actualización de estados en Plataforma Logística y Plataforma Posnet.
-· Visualización de órdenes propias y de técnicos a cargo para Supervisores.
+Respuesta que obtendrías del prompt:
 
-Fuera del alcance:
+Historia de usuario:
+Como analista de datos, quiero que Power BI muestre gráficos actualizados automáticamente desde la base de datos, para tomar decisiones con información en tiempo real.
 
-· Pruebas de rendimiento y carga.
-· Pruebas de seguridad.
-· Flujos de recuperación de contraseña.
+Para la documentación técnica:
 
----
+· Tipo de conexión a BD (gateway, direct query, importación).
+· Frecuencia y método de sincronización (refresco programado, API).
+· Requisitos de red y permisos de base de datos.
+· Modelo de datos usado (tablas, relaciones, medidas DAX).
+· Logs y errores de sincronización.
 
-3. Escenarios de prueba
+Para la documentación funcional:
 
-Flujo 1: Creación de agentes y sincronización
-
-Objetivo: Validar la creación correcta de agentes y su propagación a los sistemas destino.
-
-Precondiciones:
-
-· Acceso a Plataforma Posnet con perfil administrador.
-· Acceso a Security Portal 2.0 para verificar usuarios.
-· Acceso a Plataforma Logística para verificar recepción de datos.
-
-Escenarios:
-
-ID Escenario Descripción
-F1-E1 Crear Representante Crear un Representante con todos los campos obligatorios. Validar que se guarda correctamente.
-F1-E2 Crear Técnico asignado a Representante Crear un Técnico y asignarlo a un Representante. Validar asignación.
-F1-E3 Crear Supervisor asignado a Representante Crear un Supervisor y asignarlo a un Representante. Validar asignación.
-F1-E4 Supervisor asigna Técnicos Desde el perfil Supervisor, asignar Técnicos a su cargo.
-F1-E5 Sincronización a Security Portal 2.0 Validar que los usuarios creados existen en Security Portal 2.0.
-F1-E6 Envío de email con credenciales Validar que Técnicos y Supervisores reciben email con usuario y contraseña.
-F1-E7 Envío de datos a Plataforma Logística Validar que los datos de Representantes, Técnicos y Supervisores llegan correctamente a Logística.
-
----
-
-Flujo 2: Acceso a Mobile y funcionalidades base
-
-Objetivo: Validar que Técnicos y Supervisores pueden acceder a Mobile y utilizar las funcionalidades de visualización, mapa, búsqueda y escáner.
-
-Precondiciones:
-
-· Usuarios creados y sincronizados.
-· Credenciales recibidas por email.
-· Órdenes asignadas para visualizar en mapa y búsqueda.
-
-Escenarios:
-
-ID Escenario Descripción
-F2-E1 Login exitoso Técnico Ingresar a Mobile con usuario Técnico y contraseña recibida.
-F2-E2 Login exitoso Supervisor Ingresar a Mobile con usuario Supervisor y contraseña recibida.
-F2-E3 Visualización de órdenes - Técnico El Técnico solo ve las órdenes asignadas a él.
-F2-E4 Visualización de órdenes - Supervisor El Supervisor ve sus órdenes asignadas + las órdenes de los Técnicos a su cargo.
-F2-E5 Visualización de órdenes en mapa - Técnico El Técnico ve marcadores en el mapa con la ubicación de sus órdenes asignadas.
-F2-E6 Visualización de órdenes en mapa - Supervisor El Supervisor ve marcadores de sus órdenes + las de sus técnicos a cargo.
-F2-E7 Filtrado de órdenes en mapa por estado Aplicar filtro por estado (ej: Pendiente) y validar que solo se muestran las correspondientes.
-F2-E8 Búsqueda de órdenes por texto Buscar órdenes por número de orden, número de terminal o dirección.
-F2-E9 Búsqueda sin resultados Ingresar término inexistente y validar mensaje de "No se encontraron órdenes".
-F2-E10 Escaneo de cupón válido Escanear cupón de una orden activa y validar que abre el detalle de la orden correcta.
-F2-E11 Escaneo de cupón de orden completada Escanear cupón de una orden ya finalizada y validar mensaje de "Orden ya completada".
-F2-E12 Escaneo de código inválido Escanear un código no registrado y validar mensaje de "Orden no encontrada".
-F2-E13 Acceso a detalle de orden desde mapa Desde el mapa, tocar un marcador y seleccionar "Ver detalle" para navegar a la orden.
-
----
-
-Flujo 3: Creación y asignación de solicitudes en Plataforma Posnet
-
-Objetivo: Validar el ciclo de creación, búsqueda y asignación de solicitudes respetando la regla de una orden activa por terminal.
-
-Precondiciones:
-
-· Terminal existente en el sistema.
-· Representantes y Técnicos creados y asignados.
-
-Escenarios:
-
-ID Escenario Descripción
-F3-E1 Crear solicitud por terminal Buscar terminal, seleccionar tipo de solicitud, completar horario y observación. Confirmar creación.
-F3-E2 Validar regla de una orden activa por terminal Intentar crear una solicitud para una terminal que ya tiene una orden activa. Validar que el sistema bloquea la creación.
-F3-E3 Buscar solicitud por número de gestión En operaciones → solicitudes, buscar por número de gestión.
-F3-E4 Buscar solicitud por número de solicitud Buscar por número de solicitud generado.
-F3-E5 Buscar solicitud por número de terminal Buscar por número de terminal asociado.
-F3-E6 Asignar solicitud Asignar la solicitud a un Representante y a un Técnico de ese Representante.
-F3-E7 Notificar solicitud Ejecutar notificación y validar cambio a estado "Esperando confirmación".
-F3-E8 Envío a Logística y Mobile Validar que la solicitud asignada y notificada llega a Logística y a Mobile del Técnico.
-
----
-
-Flujo 4: Ejecución de órdenes en Mobile
-
-Objetivo: Validar las acciones que puede realizar el Técnico sobre una orden asignada.
-
-Precondiciones:
-
-· Técnico con sesión iniciada en Mobile.
-· Orden asignada en estado "Esperando confirmación".
-
-Escenarios:
-
-ID Escenario Descripción
-F4-E1 Validar terminal manualmente Ingresar número de terminal manualmente → Score amarillo.
-F4-E2 Validar terminal con foto de cupón Sacar foto al cupón → Score verde.
-F4-E3 Rechazar orden Seleccionar motivo de rechazo según tipo de solicitud. Confirmar rechazo.
-F4-E4 Completar orden - Flujo completo Validar terminal, ingresar número de serie, foto de cupón, nombre, cargo, observación.
-F4-E5 Geolocalización dentro de 8 cuadras Validar que al estar dentro del rango el Score es verde.
-F4-E6 Geolocalización fuera de 8 cuadras Validar que al estar fuera del rango el Score es rojo.
-
----
-
-Flujo 5: Actualización de estados en plataformas
-
-Objetivo: Validar la propagación de cambios de estado entre Mobile, Logística y Plataforma Posnet.
-
-Precondiciones:
-
-· Orden completada o rechazada desde Mobile.
-
-Escenarios:
-
-ID Escenario Descripción
-F5-E1 Orden completada - Estado en Logística Validar que en Plataforma Logística la orden pasa a "Completado".
-F5-E2 Orden completada - Estado en Posnet Validar que en Plataforma Posnet la orden cambia al estado final correspondiente.
-F5-E3 Orden completada - Terminal queda libre Validar que se puede crear una nueva solicitud para la misma terminal.
-F5-E4 Orden rechazada - Estado en Logística Validar que en Plataforma Logística la orden pasa al estado de rechazo.
-F5-E5 Orden rechazada - Estado en Posnet Validar que en Plataforma Posnet la orden vuelve a "Pendiente".
-F5-E6 Orden rechazada - Terminal queda libre Validar que se puede crear una nueva solicitud para la misma terminal.
-
----
-
-5. Criterios de aceptación
-
-Flujo Criterio de aceptación
-F1 Los agentes se crean correctamente, se sincronizan con Security Portal 2.0, reciben email y los datos llegan a Logística.
-F2 Técnicos y Supervisores pueden acceder a Mobile. Supervisores ven órdenes propias y de sus técnicos. El mapa muestra correctamente la ubicación de las órdenes según el perfil. Los filtros en mapa funcionan correctamente. La búsqueda devuelve resultados precisos. El escáner redirige a la orden correcta o muestra mensajes adecuados según el caso.
-F3 Las solicitudes se crean, buscan, asignan y notifican correctamente. No se permite crear una solicitud para una terminal con orden activa. El estado cambia a "Esperando confirmación" tras la notificación.
-F4 Las órdenes pueden validarse (manual/foto), rechazarse o completarse. El Score se calcula según reglas (verde para foto, amarillo para manual, rojo para geolocalización fuera de rango). Los motivos de rechazo varían según tipo de solicitud.
-F5 Los cambios de estado se reflejan en Logística y Posnet según la acción realizada en Mobile. Al completar o rechazar una orden, la terminal queda libre para nuevas solicitudes.
+· Pasos para conectar Power BI a la BD (seleccionar origen, credenciales).
+· Cómo crear o modificar gráficos visuales.
+· Cómo programar el refresco de datos.
+· Dónde ver el estado de la última sincronización.
+· Roles del usuario (ver gráficos vs. publicar informes).
