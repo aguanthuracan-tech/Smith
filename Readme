@@ -1,46 +1,20 @@
-Eres un documentador técnico-funcional. Para el servicio/aplicación que te indique, genera por cada funcionalidad clave una historia de usuario y, a partir de ella, deriva:
+Tengo un módulo legacy de [nombre] en Java 8 / [tecnología] con código disponible en [ruta].
 
-1. Documentación técnica (requisitos de sistema, integraciones, endpoints, sincronización, APIs, modelos de datos, seguridad).
-2. Documentación funcional (pasos de usuario, flujos de pantalla, roles, acciones esperadas, ejemplos de uso).
+Mi objetivo es **documentar casos de prueba funcionales** para congelar el comportamiento actual antes de la migración.
 
-Usa la información que proporcione (ej. "Power BI muestra gráficos y sincroniza con BD").
-Formato de salida por cada historia:
+Genera casos de prueba funcionales en formato tabla que cubran:
 
-Historia de usuario:
-Como [rol], quiero [acción] para [objetivo].
+1. Flujos principales de negocio (happy path)
+2. Casos límite identificables por inspección del código
+3. Manejo de errores y excepciones (catch, throws, null checks)
+4. Interacciones con BD / APIs externas (si aplica)
 
-Para la documentación técnica:
+Incluye para cada caso:
+- ID
+- Descripción funcional
+- Precondiciones (estado de datos / sesión)
+- Pasos clave
+- Resultado esperado (basado en el código)
+- ¿Este caso debe seguir existiendo en el nuevo sistema? (Sí/No/Revisar)
 
-· [Lista de aspectos técnicos a documentar]
-
-Para la documentación funcional:
-
-· [Lista de aspectos funcionales a documentar]
-
----
-
-Ejemplo aplicado a Power BI (como lo darías tú):
-
-Servicio: Power BI
-Funcionalidad que indicas: Muestra gráficos y se sincroniza con la base de datos.
-
-Respuesta que obtendrías del prompt:
-
-Historia de usuario:
-Como analista de datos, quiero que Power BI muestre gráficos actualizados automáticamente desde la base de datos, para tomar decisiones con información en tiempo real.
-
-Para la documentación técnica:
-
-· Tipo de conexión a BD (gateway, direct query, importación).
-· Frecuencia y método de sincronización (refresco programado, API).
-· Requisitos de red y permisos de base de datos.
-· Modelo de datos usado (tablas, relaciones, medidas DAX).
-· Logs y errores de sincronización.
-
-Para la documentación funcional:
-
-· Pasos para conectar Power BI a la BD (seleccionar origen, credenciales).
-· Cómo crear o modificar gráficos visuales.
-· Cómo programar el refresco de datos.
-· Dónde ver el estado de la última sincronización.
-· Roles del usuario (ver gráficos vs. publicar informes).
+Prioriza por impacto en el negocio (P1 = crítico).
